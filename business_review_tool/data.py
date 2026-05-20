@@ -36,14 +36,28 @@ def discover_input_file(patterns: Iterable[str]) -> Path | None:
 
 
 def default_business_path() -> Path:
-    path = discover_input_file(["businesses*.csv", "businesses*.xlsx"])
+    path = discover_input_file(
+        [
+            "data/businesses*.csv",
+            "data/businesses*.xlsx",
+            "businesses*.csv",
+            "businesses*.xlsx",
+        ]
+    )
     if path is None:
         raise FileNotFoundError("Could not find a business dataset file in the current directory.")
     return path
 
 
 def default_review_path() -> Path:
-    path = discover_input_file(["reviews*.csv", "reviews*.xlsx"])
+    path = discover_input_file(
+        [
+            "data/reviews*.csv",
+            "data/reviews*.xlsx",
+            "reviews*.csv",
+            "reviews*.xlsx",
+        ]
+    )
     if path is None:
         raise FileNotFoundError("Could not find a reviews dataset file in the current directory.")
     return path
@@ -107,4 +121,3 @@ def load_and_prepare(
     businesses = prepare_businesses(read_table(business_file))
     reviews = prepare_reviews(read_table(review_file))
     return businesses, reviews
-

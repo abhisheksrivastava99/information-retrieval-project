@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .dataset_fetcher import DatasetFetchError, fetch_dataset
 from .indexer import (
     build_index,
     business_summary,
@@ -29,6 +30,15 @@ def build_parser() -> argparse.ArgumentParser:
     build_cmd = subparsers.add_parser("build-index", help="Build the TF-IDF search index.")
     build_cmd.add_argument("--business-file", help="Path to the business CSV or workbook.")
     build_cmd.add_argument("--review-file", help="Path to the review CSV or workbook.")
+
+    fetch_cmd = subparsers.add_parser(
+        "fetch-data", help="Download the Git LFS dataset files into the local data folder."
+    )
+    fetch_cmd.add_argument(
+        "--force",
+        action="store_true",
+        help="Re-download the dataset even if local copies already exist.",
+    )
 
     search_cmd = subparsers.add_parser("search", help="Search for relevant businesses.")
     search_cmd.add_argument("--query", required=True, help="Natural-language search query.")
@@ -58,6 +68,19 @@ def run_cli() -> int:
     parser = build_parser()
     args = parser.parse_args()
     cache_dir = Path(args.cache_dir)
+
+    if args.command == "fetch-data":
+        try:
+            result = fetch_dataset(force=args.force)
+        except DatasetFetchError as exc:
+            print(f"Error: {exc}")
+            return 1
+        action = "Using existing dataset files" if result.reused_existing else "Dataset files ready"
+        print(f"{action}:")
+        for path in result.paths:
+            print(f"- {path}")
+        print("Next step: python app.py build-index")
+        return 0
 
     if args.command == "build-index":
         metadata = build_index(args.business_file, args.review_file, cache_dir)
@@ -134,4 +157,3 @@ def run_cli() -> int:
 
     parser.error("Unknown command")
     return 2
-

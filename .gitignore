@@ -2,5 +2,8 @@
 /.cache
 /.venv
 /Application.zip
-/README.md
-/requirements.md
+/data/
+/businesses*.csv
+/businesses*.xlsx
+/reviews*.csv
+/reviews*.xlsx
