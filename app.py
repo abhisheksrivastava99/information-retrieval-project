@@ -1,0 +1,6 @@
+from business_review_tool.cli import run_cli
+
+
+if __name__ == "__main__":
+    raise SystemExit(run_cli())
+
