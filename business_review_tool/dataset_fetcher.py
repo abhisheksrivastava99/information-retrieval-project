@@ -85,6 +85,11 @@ def clone_dataset_branch(destination: Path) -> None:
         error_prefix=f"Failed to clone dataset branch `{DATA_BRANCH}`",
     )
     run_command(
+        ["git", "lfs", "install", "--local"],
+        cwd=destination,
+        error_prefix=f"Failed to initialize Git LFS in `{DATA_BRANCH}`",
+    )
+    run_command(
         ["git", "lfs", "pull"],
         cwd=destination,
         error_prefix=f"Failed to download Git LFS objects from `{DATA_BRANCH}`",
